@@ -23,3 +23,10 @@ class Loading extends UserState {
   @override
   List<Object> get props => [];
 }
+
+class Error extends UserState {
+ final Map error;
+  Error(this.error);
+  @override
+  List<Object> get props => [];
+}

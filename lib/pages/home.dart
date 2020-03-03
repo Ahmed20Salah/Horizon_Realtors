@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:horizon_realtors/widget/bottom_bar.dart';
 import 'package:horizon_realtors/widget/product.dart';
 
-class UserHome extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  _UserHomeState createState() => _UserHomeState();
+  _HomeState createState() => _HomeState();
 }
 
-class _UserHomeState extends State<UserHome> {
+class _HomeState extends State<Home> {
   var cat = [
     {'name': 'Agents', 'icon': 'assets/agent.png'},
     {'name': 'Agency', 'icon': 'assets/agency.png'},
@@ -29,87 +30,59 @@ class _UserHomeState extends State<UserHome> {
               color: Color(0xff3FB1E3),
             ),
             _search(context),
-            _navigationBy(context),
-            _products(context),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4), border: Border.all()),
+              height: 200.0,
+              child: Echarts(
+                option: '''
+               {
+                xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: ['DEC 20 \u1d40\u1d34', 'DEC 27', 'JAN 3', 'JAN 11', 'JAN 18'],
+                  axisLabel:{
+                    color:"#6178B9",
+                  }
+                },
+                yAxis: {
+                  type: 'value',
+                  show: false,
+                 
+                },
+                
+                series: [{
+                  data: [820, 932, 901, 934, 1290, 1330, 1320],
+                  type: 'line',
+                  symbol: 'circle',
+                  symbolSize: 8,
+                  lineStyle: {
+                      color: '#3FB1E3',
+                      width: 4,
+                      type: 'solid'
+                  },
+                  itemStyle: {
+                      borderWidth: 1,
+                      borderColor: "#3FB1E3",
+                      color: "#3FB1E3"
+                  },
+                  label:{
+                    show: true
+                  },
+                  areaStyle: {
+                    color:"#EEF5F8"
+                  }
+                 
+                }],
+              }
+               ''',
+              ),
+            )
           ],
         ),
       ),
       bottomNavigationBar: CustomBottomBar(0),
-    );
-  }
-
-  Container _products(BuildContext context) {
-    return Container(
-            margin: EdgeInsets.only(right:16.0 , left: 16.0 ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Highlights',
-                  style: TextStyle(
-                      color: Color(0xff363636),
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height - 400.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(0),
-                    itemCount: 2,
-                    itemBuilder: (BuildContext context, index){
-                    return ProductWidget();
-                  }),
-                ),
-              ],
-            ),
-          );
-  }
-
-  Container _navigationBy(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 145.0,
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Navigate by category',
-            style: TextStyle(
-                color: Color(0xff363636),
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold),
-          ),
-          Container(
-            height: 80.0,
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(top: 10.0),
-            child: ListView.builder(
-                itemCount: 6,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Container(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 15.0),
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xff3FB1E3),
-                          ),
-                          child: Image.asset(cat[index]['icon']),
-                        ),
-                        Text(cat[index]['name'])
-                      ],
-                    ),
-                  );
-                }),
-          )
-        ],
-      ),
     );
   }
 
@@ -161,15 +134,16 @@ class _UserHomeState extends State<UserHome> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0,),
-                
+                SizedBox(
+                  width: 10.0,
+                ),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: .5),
                     decoration: BoxDecoration(
                       border: Border(
-                        // bottom: BorderSide(color: Colors.white, width: 2),
-                      ),
+                          // bottom: BorderSide(color: Colors.white, width: 2),
+                          ),
                     ),
                     child: Text(
                       'For Sale',
@@ -187,9 +161,9 @@ class _UserHomeState extends State<UserHome> {
             height: 12.0,
           ),
           TextFormField(
-              textInputAction: TextInputAction.search,
-              decoration:
-                  _inputDecoration('Find agents, agencies & properties'), )
+            textInputAction: TextInputAction.search,
+            decoration: _inputDecoration('Find agents, agencies & properties'),
+          )
         ],
       ),
     );

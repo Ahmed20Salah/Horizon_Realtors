@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:horizon_realtors/pages/login_screen.dart';
+import 'package:horizon_realtors/pages/home.dart';
 import 'package:horizon_realtors/pages/user_home.dart';
-import 'package:horizon_realtors/pages/user_type.dart';
+
+import 'pages/login_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: UserHome(),
+      home: Home(),
     );
   }
 }

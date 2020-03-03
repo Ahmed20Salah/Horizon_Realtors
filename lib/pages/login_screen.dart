@@ -1,11 +1,18 @@
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:horizon_realtors/pages/register.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:horizon_realtors/widget/logo.dart';
+
+import '../blocs/user_bloc/user_bloc.dart';
+import '../blocs/user_bloc/user_bloc.dart';
+import '../blocs/user_bloc/user_bloc.dart';
+import 'user_home.dart';
 
 class LoginPage extends StatelessWidget {
   final _formkey = GlobalKey<FormState>();
+  final _bloc = UserBloc();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _pass = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +51,32 @@ class LoginPage extends StatelessWidget {
                         height: 16.0,
                       ),
                       TextFormField(
+                        controller: _email,
                         style: TextStyle(color: Colors.white),
-                        decoration: _inputDecoration(
-                            'Email', 'please enter a valid email'),
+                        validator: (val) {
+                          if (val.isEmpty ||
+                              !val.contains('@') ||
+                              val.length < 2) {
+                            return 'please enter a valid email';
+                          }
+                        },
+                        decoration: _inputDecoration('Email'),
                       ),
                       SizedBox(
                         height: 10.0,
                       ),
                       TextFormField(
+                        controller: _pass,
+                        validator: (val) {
+                          if (val.isEmpty ||
+                              val.length < 5 ||
+                              val.contains(' ')) {
+                            return 'please enter a valid password';
+                          }
+                        },
+                        obscureText: true,
                         style: TextStyle(color: Colors.white),
-                        decoration: _inputDecoration(
-                            'Password', 'please enter a valid password'),
+                        decoration: _inputDecoration('Password'),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 15.0, top: 5),
@@ -75,6 +97,7 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
                       _createButton(context),
+                      _listen()
                     ],
                   ),
                 ),
@@ -86,19 +109,63 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _inputDecoration(String hint, String error) {
-    return InputDecoration(
-      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-           fillColor: Colors.white.withOpacity(.24),
-
-      filled: true,
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.white),
-      border: InputBorder.none,
-      errorStyle: TextStyle(color: Color(0xffFF9292)),
-      enabledBorder: _inputBorder(),
-      focusedBorder: _inputBorder(),
+  BlocListener<UserBloc, dynamic> _listen() {
+    return BlocListener(
+      bloc: _bloc,
+      listener: (context, state) {
+        if (state is Loading) {
+          return showDialog(
+            context: context,
+            child: AlertDialog(
+              elevation: 0.0,
+              backgroundColor: Colors.transparent,
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
+          );
+        } else if (state is Error) {
+          Navigator.pop(context);
+          return showBottomSheet(
+            context: context,
+            builder: (context) => Container(
+              alignment: Alignment.center,
+              height: 30.0,
+              child: Text(state.error['message']),
+            ),
+          );
+        } else if (state is Authenticated) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserHome(),
+            ),
+          );
+        }
+        return Container();
+      },
+      child: Container(),
     );
+  }
+
+  _inputDecoration(String hint) {
+    return InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        fillColor: Colors.white.withOpacity(.24),
+        filled: true,
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.white),
+        border: _inputBorder(),
+        errorStyle: TextStyle(color: Color(0xffFCE187)),
+        enabledBorder: _inputBorder(),
+        focusedBorder: _inputBorder(),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: Color(0xffFF9292)),
+        ));
   }
 
   _inputBorder() {
@@ -109,24 +176,32 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _loginButton(context) {
-    return InkWell(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        height: 48.0,
-        alignment: Alignment.center,
-        child: Text(
-          'Login',
-          style: TextStyle(
-              color: Color(0xff6178B9),
-              fontSize: 16,
-              fontWeight: FontWeight.bold),
-        ),
-      ),
-      onTap: () {
-        
+    return BlocBuilder(
+      bloc: _bloc,
+      builder: (context, state) {
+        return InkWell(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+            height: 48.0,
+            alignment: Alignment.center,
+            child: Text(
+              'Login',
+              style: TextStyle(
+                  color: Color(0xff6178B9),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          onTap: () {
+            _formkey.currentState.save();
+            if (_formkey.currentState.validate()) {
+              _bloc.add(Login({'email': _email.text, 'password': _pass.text}));
+            }
+          },
+        );
       },
     );
   }
@@ -137,7 +212,7 @@ class LoginPage extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(24.0),
-            border: Border.all(color: Colors.white , width: 2)),
+            border: Border.all(color: Colors.white, width: 2)),
         height: 48.0,
         alignment: Alignment.center,
         child: Text(
@@ -146,14 +221,7 @@ class LoginPage extends StatelessWidget {
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
-      onTap: (){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Register(),
-          ),
-        );
-      },
+      onTap: () {},
     );
   }
 }

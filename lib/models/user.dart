@@ -8,13 +8,6 @@ class User {
   String token;
   UserType type;
   String agencyname;
-  User(
-      {@required this.name,
-      @required this.email,
-      @required this.password,
-      @required this.phone,
-      @required this.type,
-      this.agencyname});
 
   User.fromMap(map) {
     this.name = map['name'];

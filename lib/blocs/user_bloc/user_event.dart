@@ -4,10 +4,17 @@ abstract class UserEvent extends Equatable {
   const UserEvent();
 }
 
-abstract class Login extends Equatable {
-  const Login();
+class Login extends UserEvent {
+ final Map user;
+  Login(this.user);
+
+  @override
+  List<Object> get props => null;
 }
 
-abstract class ForgetPassword extends Equatable {
+class ForgetPassword extends UserEvent {
   const ForgetPassword();
+
+  @override
+  List<Object> get props => null;
 }
