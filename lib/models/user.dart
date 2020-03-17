@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
-
 class User {
+  int id;
   String name;
   String email;
   String password;
@@ -8,16 +7,20 @@ class User {
   String token;
   UserType type;
   String agencyname;
+  String image;
 
-  User.fromMap(map) {
+  User.fromMap(Map<String, dynamic> map) {
+   print('calling user model');
+    this.id = map['id'];
     this.name = map['name'];
     this.email = map['email'];
     this.phone = map['phone'];
     this.token = map['token'];
-    this.type = map['type'] == 1
+    this.image = map['image'];
+    this.type = map['role'] == "1"
         ? UserType.EndUser
-        : map['type'] == 2 ? UserType.Agent : UserType.Agency;
-    map['type'] == 2
+        : map['role'] == "2" ? UserType.Agent : UserType.Agency;
+    map['role'] == "2"
         ? this.agencyname = map['agency_name']
         : this.agencyname = null;
   }
@@ -26,9 +29,9 @@ class User {
     map['name'] = this.name;
     map['email'] = this.email;
     map['phone'] = this.phone;
-    map['type'] = this.type == UserType.EndUser
-        ? 1
-        : this.type == UserType.Agency ? 2 : 3;
+    map['role'] = this.type == UserType.EndUser
+        ? "1"
+        : this.type == UserType.Agency ? "2" : "3";
     map['agancy_name'] = this.agencyname;
     return map;
   }

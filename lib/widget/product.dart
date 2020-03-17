@@ -1,96 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:horizon_realtors/models/post.dart';
+import 'package:horizon_realtors/pages/description.dart';
+
+import '../models/user.dart';
+import '../repository/user_repo.dart';
 
 class ProductWidget extends StatelessWidget {
+  final Post post;
+  ProductWidget(this.post);
+
+  final _userRepository = UserRepository();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 255,
-      margin: EdgeInsets.symmetric(
-        vertical: 10.0,
+    return InkWell(
+      child: Container(
+        height: 255,
+        margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+        child: Column(
+          children: <Widget>[
+            _picWidget(context),
+            _title(context),
+            Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              height: 1.0,
+              color: Color(0xffECECEC),
+            ),
+            _details()
+          ],
+        ),
       ),
-      child: Column(
-        children: <Widget>[
-          _picWidget(context),
-          _title(context),
-          Container(
-            margin: EdgeInsets.only(bottom: 5.0),
-            height: 1.0,
-            color: Color(0xffECECEC),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Description(post),
           ),
-          _details()
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Container _details() {
+  Container _picWidget(BuildContext context) {
     return Container(
-          child: Row(
-            children: <Widget>[
-              Image.asset('assets/home.png'),
-              SizedBox(
-                width: 35.0,
-              ),
-              Container(
-                height: 25.0,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset('assets/bed.png'),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      '2',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+      height: 162.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        image: DecorationImage(
+            image: AssetImage('assets/photo.jpg'), fit: BoxFit.cover),
+      ),
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: 32,
+              height: 32,
+              child: _userRepository.user.type == UserType.EndUser
+                  ? InkWell(
+                      child: Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                      ),
                     )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 35.0,
-              ),
-              Container(
-                height: 25.0,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset('assets/bath.png'),
-                    SizedBox(
-                      width: 8,
+                  : Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle),
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                      ),
                     ),
-                    Text(
-                      '4',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 35.0,
-              ),
-              Container(
-                height: 25.0,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset('assets/area.png'),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      '168 ft\u00B2',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        );
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 54.0,
+                  height: 26.0,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Color(0xff3FB1E3),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    post.type == PropertyType.ForRent ? 'Rent' : 'Sale',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Container _title(BuildContext context) {
@@ -127,7 +138,7 @@ class ProductWidget extends StatelessWidget {
           ),
           Container(
             child: Text(
-              '\$899,99',
+              '\$${post.price}',
               style: TextStyle(
                   color: Color(0xff6178B9),
                   fontWeight: FontWeight.bold,
@@ -139,47 +150,68 @@ class ProductWidget extends StatelessWidget {
     );
   }
 
-  Container _picWidget(BuildContext context) {
+  Container _details() {
     return Container(
-      height: 162.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        image: DecorationImage(
-            image: AssetImage('assets/photo.jpg'), fit: BoxFit.cover),
-      ),
-      padding: EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
         children: <Widget>[
-          Container(
-            alignment: Alignment.topRight,
-            child:
-                InkWell(child: Icon(Icons.favorite , color: Colors.white,)),
+          Image.asset('assets/home.png'),
+          SizedBox(
+            width: 35.0,
           ),
           Container(
-            width: MediaQuery.of(context).size.width,
+            height: 25.0,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: 54.0,
-                  height: 26.0,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Color(0xff3FB1E3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'Rent',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
+                Image.asset('assets/bed.png'),
+                SizedBox(
+                  width: 8,
                 ),
+                Text(
+                  '${post.bedrooms}',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                )
               ],
             ),
-          )
+          ),
+          SizedBox(
+            width: 35.0,
+          ),
+          Container(
+            height: 25.0,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/bath.png'),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  '${post.bathrooms}',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 35.0,
+          ),
+          Container(
+            height: 25.0,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/area.png'),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  '${post.area} ft\u00B2',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -9,6 +9,7 @@ part 'user_event.dart';
 part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
+  final _userRepository = UserRepository();
   @override
   UserState get initialState => UserInitial();
 
@@ -19,18 +20,33 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     if (event is Login) {
       yield Loading();
 
-      var re = await login(event.user);
-      try {
-        if (re['status']) {
-          yield Authenticated();
-        } else {
-          yield Error(re);
-        }
-      } catch (e) {
-        print(e);
-        
-        yield Error({'message': 'Something went wrong!'});
+      var re = await _userRepository.login(event.user);
+
+      if (re['status']) {
+        yield Authenticated();
+      } else {
+        yield Error(re);
       }
+    } else if (event is Register) {
+      print('register');
+      yield Loading();
+      var re = await _userRepository.register(event.user);
+      if (re['status']) {
+        yield Authenticated();
+      } else {
+        yield Error(re);
+      }
+    } else if (event is Checking) {
+      yield Loading();
+      var re = await _userRepository.checkAuth();
+      if (re) {
+        yield Authenticated();
+      } else {
+        yield Unauthenticated();
+      }
+    } else if (event is Search) {
+      var re = _userRepository.search(event.word);
+      yield Founded(re);
     }
   }
 }

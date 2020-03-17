@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:horizon_realtors/blocs/posts_bloc/posts_bloc.dart';
+import 'package:horizon_realtors/repository/posts_repo.dart';
 import 'package:horizon_realtors/widget/bottom_bar.dart';
 import 'package:horizon_realtors/widget/product.dart';
 
@@ -16,6 +19,14 @@ class _UserHomeState extends State<UserHome> {
     {'name': 'House', 'icon': 'assets/house.png'},
     {'name': 'Land', 'icon': 'assets/land.png'},
   ];
+  PostsBloc _bloc = PostsBloc();
+  PostsRepository _postsRepository = PostsRepository();
+
+  @override
+  void initState() {
+    _bloc.add(GetPosts());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,30 +51,50 @@ class _UserHomeState extends State<UserHome> {
 
   Container _products(BuildContext context) {
     return Container(
-            margin: EdgeInsets.only(right:16.0 , left: 16.0 ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Highlights',
-                  style: TextStyle(
-                      color: Color(0xff363636),
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height - 400.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(0),
-                    itemCount: 2,
-                    itemBuilder: (BuildContext context, index){
-                    return ProductWidget();
-                  }),
-                ),
-              ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Highlights',
+              style: TextStyle(
+                  color: Color(0xff363636),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold),
             ),
-          );
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height - 400.0,
+            width: MediaQuery.of(context).size.width,
+            child: BlocBuilder(
+              bloc: _bloc,
+              builder: (context, state) {
+                if (state is HasData) {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(0),
+                    itemCount: _postsRepository.posts.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return ProductWidget( _postsRepository.posts[index]);
+                    },
+                  );
+                } else if (state is Loading) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Text('NotFound'),
+                  );
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Container _navigationBy(BuildContext context) {
@@ -161,15 +192,16 @@ class _UserHomeState extends State<UserHome> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0,),
-                
+                SizedBox(
+                  width: 10.0,
+                ),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: .5),
                     decoration: BoxDecoration(
                       border: Border(
-                        // bottom: BorderSide(color: Colors.white, width: 2),
-                      ),
+                          // bottom: BorderSide(color: Colors.white, width: 2),
+                          ),
                     ),
                     child: Text(
                       'For Sale',
@@ -187,9 +219,9 @@ class _UserHomeState extends State<UserHome> {
             height: 12.0,
           ),
           TextFormField(
-              textInputAction: TextInputAction.search,
-              decoration:
-                  _inputDecoration('Find agents, agencies & properties'), )
+            textInputAction: TextInputAction.search,
+            decoration: _inputDecoration('Find agents, agencies & properties'),
+          )
         ],
       ),
     );

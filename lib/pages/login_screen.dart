@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:horizon_realtors/widget/logo.dart';
 
 import '../blocs/user_bloc/user_bloc.dart';
-import '../blocs/user_bloc/user_bloc.dart';
-import '../blocs/user_bloc/user_bloc.dart';
+import '../models/user.dart';
+import '../repository/user_repo.dart';
+import 'home.dart';
+import 'register.dart';
 import 'user_home.dart';
 
 class LoginPage extends StatelessWidget {
@@ -13,7 +15,7 @@ class LoginPage extends StatelessWidget {
   final _bloc = UserBloc();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _pass = TextEditingController();
-
+  final _userRepository = UserRepository();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,19 +131,23 @@ class LoginPage extends StatelessWidget {
           );
         } else if (state is Error) {
           Navigator.pop(context);
-          return showBottomSheet(
-            context: context,
-            builder: (context) => Container(
-              alignment: Alignment.center,
-              height: 30.0,
-              child: Text(state.error['message']),
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Container(
+                alignment: Alignment.center,
+                height: 20.0,
+                child: Text(state.error['error']),
+              ),
             ),
           );
         } else if (state is Authenticated) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => UserHome(),
+              builder: (context) =>
+                  _userRepository.user.type == UserType.EndUser
+                      ? UserHome()
+                      : Home(),
             ),
           );
         }
@@ -221,7 +227,14 @@ class LoginPage extends StatelessWidget {
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegisterPage(),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:horizon_realtors/blocs/user_bloc/user_bloc.dart';
 import 'package:horizon_realtors/models/user.dart';
+import 'package:horizon_realtors/pages/agency_search.dart';
+import 'package:horizon_realtors/pages/register.dart';
 import 'package:horizon_realtors/widget/logo.dart';
 
 class UserTypeScreen extends StatefulWidget {
+  final Map data;
+  UserTypeScreen({this.data});
   @override
   _UserType createState() => _UserType();
 }
 
 class _UserType extends State<UserTypeScreen> {
   UserType type;
+  bool frelancer;
+  final _bloc = UserBloc();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +43,9 @@ class _UserType extends State<UserTypeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'What better describes you?',
+                        widget.data == null
+                            ? 'What better describes you?'
+                            : 'How do you work?',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -56,7 +66,7 @@ class _UserType extends State<UserTypeScreen> {
                                 border: Border.all(
                                     color: Colors.white, width: 1.25),
                               ),
-                              child: type == UserType.Agent
+                              child: type == UserType.Agent || frelancer == true
                                   ? Container(
                                       width: 12.0,
                                       height: 12.0,
@@ -70,7 +80,9 @@ class _UserType extends State<UserTypeScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text(
-                                'I`m an agent',
+                                widget.data == null
+                                    ? 'I`m an agent'
+                                    : 'I work as freelancer',
                                 style: TextStyle(color: Colors.white),
                               ),
                             )
@@ -78,7 +90,11 @@ class _UserType extends State<UserTypeScreen> {
                         ),
                         onTap: () {
                           setState(() {
-                            type = UserType.Agent;
+                            if (widget.data == null) {
+                              type = UserType.Agent;
+                            } else {
+                              frelancer = true;
+                            }
                           });
                         },
                       ),
@@ -97,21 +113,24 @@ class _UserType extends State<UserTypeScreen> {
                                 border: Border.all(
                                     color: Colors.white, width: 1.25),
                               ),
-                              child: type == UserType.Agency
-                                  ? Container(
-                                      width: 12.0,
-                                      height: 12.0,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle),
-                                    )
-                                  : Container(),
+                              child:
+                                  type == UserType.Agency || frelancer == false
+                                      ? Container(
+                                          width: 12.0,
+                                          height: 12.0,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle),
+                                        )
+                                      : Container(),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text(
-                                'I`m an agent',
+                                widget.data == null
+                                    ? 'I`m an agency'
+                                    : 'I work for an agency',
                                 style: TextStyle(color: Colors.white),
                               ),
                             )
@@ -119,7 +138,11 @@ class _UserType extends State<UserTypeScreen> {
                         ),
                         onTap: () {
                           setState(() {
-                            type = UserType.Agency;
+                            if (widget.data == null) {
+                              type = UserType.Agency;
+                            } else {
+                              frelancer = false;
+                            }
                           });
                         },
                       ),
@@ -142,19 +165,51 @@ class _UserType extends State<UserTypeScreen> {
     return InkWell(
       child: Container(
         decoration: BoxDecoration(
-          color: type == null ? Color(0xffEEF5F8) : Colors.white,
+          color: type != null || frelancer != null
+              ? Color(0xffEEF5F8)
+              : Color(0xffEEF5F8).withOpacity(.6),
           borderRadius: BorderRadius.circular(24.0),
         ),
         height: 48.0,
         alignment: Alignment.center,
         child: Text(
-          'Continue',
+          widget.data == null ? 'Continue' : 'Submit',
           style: TextStyle(
               color: Color(0xff6178B9),
               fontSize: 16,
               fontWeight: FontWeight.bold),
         ),
       ),
+      onTap: () {
+        if (widget.data == null) {
+          if (type == null) {
+            return;
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RegisterPage(type: type)));
+          }
+        } else {
+          if (frelancer == null) {
+            return;
+          } else if (frelancer) {
+            Map _updated = {
+              'name': widget.data['name'],
+              'email': widget.data['email'],
+              'phone': widget.data['phone'],
+              'password': widget.data['password'],
+              'role': '2'
+            };
+            _bloc.add(Register(_updated));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AgencySearch(widget.data)));
+          }
+        }
+      },
     );
   }
 }

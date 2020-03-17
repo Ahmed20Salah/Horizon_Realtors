@@ -25,8 +25,15 @@ class Loading extends UserState {
 }
 
 class Error extends UserState {
- final Map error;
+  final Map error;
   Error(this.error);
+  @override
+  List<Object> get props => [];
+}
+
+class Founded extends UserState {
+  final List agencies;
+  Founded(this.agencies);
   @override
   List<Object> get props => [];
 }
