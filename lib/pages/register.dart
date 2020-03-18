@@ -164,7 +164,7 @@ class _RegisterState extends State<RegisterPage> {
       filled: true,
       hintText: hint,
       hintStyle: TextStyle(color: Colors.white),
-      border: InputBorder.none,
+      border: _inputBorder(),
       errorStyle: TextStyle(color: Color(0xffFF9292)),
       enabledBorder: _inputBorder(),
       focusedBorder: _inputBorder(),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:horizon_realtors/models/agency.dart';
 import 'package:horizon_realtors/utilts/constant.dart';
 
 import 'package:http/http.dart' as http;
@@ -15,7 +16,7 @@ class UserRepository {
   }
 
   User user;
-  List<String> agenies = [];
+  List<Agency> agenies = [];
 
   login(Map log) async {
     try {
@@ -81,14 +82,16 @@ class UserRepository {
     return true;
   }
 
-
   Future<Map<String, dynamic>> getAgencies() async {
     try {
       var re = await http.get('$url/api/auth/agancys_names');
       var data = jsonDecode(re.body);
       print(data);
       if (data['status']) {
-        agenies.addAll(data['data']);
+        print(data['data']);
+        for (var item in data['data']) {
+          agenies.add(Agency.fromMAp(item));
+        }
         return {'status': true};
       } else {
         return {'status': false, 'message': data['error']};
@@ -99,12 +102,14 @@ class UserRepository {
     }
   }
 
-  List<String> search(String name) {
-    List<String> _filetrd = [];
+  List<Agency> search(String name) {
+    List<Agency> _filetrd = [];
+    print(agenies.length);
     agenies.forEach((element) {
-      if (element == name) {
+      if (element.name.contains(name)) {
+        print(element.name);
         _filetrd.add(element);
-      }
+      } 
     });
     return _filetrd;
   }

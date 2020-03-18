@@ -5,7 +5,7 @@ import 'package:horizon_realtors/models/agency.dart';
 import 'package:horizon_realtors/widget/logo.dart';
 
 class AgencySearch extends StatefulWidget {
-  Map userData;
+  final Map userData;
   AgencySearch(this.userData);
   @override
   _AgencySearchState createState() => _AgencySearchState();
@@ -13,8 +13,8 @@ class AgencySearch extends StatefulWidget {
 
 class _AgencySearchState extends State<AgencySearch> {
   final _bloc = UserBloc();
-  List<Agency> _filterdData = [];
   int agencyId;
+  Agency _agency;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,27 +65,49 @@ class _AgencySearchState extends State<AgencySearch> {
                     ),
                     BlocConsumer(
                       bloc: _bloc,
-                      listener: (context, state) {
-                        
-                      },
+                      listener: (context, state) {},
                       builder: (context, state) {
-                        return Container(
-                          height: 300.0,
-                          child: Stack(
-                            children: <Widget>[
-                              ListView.builder(
-                                itemCount: _filterdData.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    child: Text(_filterdData[index].name),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        );
+                        print(state);
+                        if (state is Founded) {
+                          return Container(
+                            height: 50.0,
+                            child: Stack(
+                              children: <Widget>[
+                                ListView.builder(
+                                  padding: EdgeInsets.all(0.0),
+                                  itemCount: state.agencies.length,
+                                  itemBuilder: (context, index) {
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _agency = state.agencies[index];
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 12, top: 10.0),
+                                        color: Colors.white,
+                                        height: 42,
+                                        child: Text(
+                                          state.agencies[index].name,
+                                          style: TextStyle(
+                                              color: Color(0xff2D2D2D),
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        } else
+                          return Container(
+                            height: 50.0,
+                          );
                       },
                     ),
+                    _submit(context),
                   ],
                 ),
               )
@@ -114,7 +136,8 @@ class _AgencySearchState extends State<AgencySearch> {
         prefixIcon: Icon(
           Icons.search,
           color: Colors.white,
-        ));
+        ),
+        prefixText: _agency == null ? ' ' : _agency.name);
   }
 
   _inputBorder() {

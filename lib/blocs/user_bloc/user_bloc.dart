@@ -45,8 +45,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield Unauthenticated();
       }
     } else if (event is Search) {
-      var re = _userRepository.search(event.word);
-      yield Founded(re);
+      yield Searching();
+
+      if (_userRepository.agenies.length == 0) {
+        _userRepository.getAgencies().then(
+          (value) async* {
+            var re = _userRepository.search(event.word);
+            
+            if (re.length > 0) {
+              yield Founded(re);
+            }
+          },
+        );
+      } else {
+        var re = _userRepository.search(event.word);
+        if (re.length > 0) {
+          yield Founded(re);
+        }
+      }
     }
   }
 }

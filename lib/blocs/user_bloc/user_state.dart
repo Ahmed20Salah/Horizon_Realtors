@@ -37,3 +37,8 @@ class Founded extends UserState {
   @override
   List<Object> get props => [];
 }
+
+class Searching extends UserState {
+  @override
+  List<Object> get props => [];
+}

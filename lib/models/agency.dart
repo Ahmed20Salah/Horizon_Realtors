@@ -1,6 +1,8 @@
-class Agency{
+class Agency {
   String name;
-  Agency.fromMAp(map){
+  int id;
+  Agency.fromMAp(map) {
     this.name = map['agancy_name'];
+    this.id = map['id'];
   }
 }
