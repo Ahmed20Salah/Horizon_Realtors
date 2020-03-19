@@ -136,7 +136,7 @@ class LoginPage extends StatelessWidget {
               content: Container(
                 alignment: Alignment.center,
                 height: 20.0,
-                child: Text(state.error['error']),
+                child: Text(state.error['errors']),
               ),
             ),
           );

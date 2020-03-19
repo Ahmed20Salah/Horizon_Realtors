@@ -72,7 +72,6 @@ class _RegisterState extends State<RegisterPage> {
                           if (val.isEmpty) {
                             return 'please enter a valid Name';
                           }
-                           
                         },
                         decoration: _inputDecoration(
                             widget.type == UserType.Agency
@@ -89,7 +88,6 @@ class _RegisterState extends State<RegisterPage> {
                           if (val.isEmpty) {
                             return 'please enter a valid email';
                           }
-                           
                         },
                         decoration: _inputDecoration(
                             widget.type == UserType.Agency
@@ -102,11 +100,11 @@ class _RegisterState extends State<RegisterPage> {
                       TextFormField(
                         style: TextStyle(color: Colors.white),
                         controller: _phone,
+                        keyboardType: TextInputType.number,
                         validator: (val) {
                           if (val.isEmpty) {
                             return 'please enter a valid Phone';
                           }
-                           
                         },
                         decoration: _inputDecoration(
                             widget.type == UserType.Agency
@@ -124,7 +122,6 @@ class _RegisterState extends State<RegisterPage> {
                           if (val.isEmpty) {
                             return 'please enter a valid password';
                           }
-                           
                         },
                         decoration: _inputDecoration('Password'),
                       ),
@@ -208,8 +205,8 @@ class _RegisterState extends State<RegisterPage> {
             'phone': _phone.text,
             'password': _pass.text,
             'role': widget.type == UserType.Agency
-                ? '3'
-                : widget.type == UserType.Agent ? "2" : "1"
+                ? '2'
+                : widget.type == UserType.Agent ? "3" : "1"
           };
           widget.type == UserType.Agent
               ? Navigator.push(
@@ -247,7 +244,7 @@ class _RegisterState extends State<RegisterPage> {
             builder: (context) => Container(
               alignment: Alignment.center,
               height: 30.0,
-              child: Text(state.error['message']),
+              child: Text(state.error['errors']),
             ),
           );
         } else if (state is Authenticated) {

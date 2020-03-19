@@ -19,8 +19,8 @@ class User {
     this.image = map['image'];
     this.type = map['role'] == "1"
         ? UserType.EndUser
-        : map['role'] == "2" ? UserType.Agent : UserType.Agency;
-    map['role'] == "2"
+        : map['role'] == "3" ? UserType.Agent : UserType.Agency;
+    map['role'] == "3"
         ? this.agencyname = map['agency_name']
         : this.agencyname = null;
   }

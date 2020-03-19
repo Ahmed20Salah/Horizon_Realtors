@@ -35,11 +35,12 @@ class UserRepository {
         per.setInt('id', user.id);
 
         // print(user.name);
+        return data;
       }
-      return jsonDecode(re.body);
+      return data;
     } catch (e) {
       print(e);
-      return {'status': false, 'error': 'verify your Connection!'};
+      return {'status': false, 'errors': 'verify your Connection!'};
     }
   }
 
@@ -58,11 +59,12 @@ class UserRepository {
         per.setString('token', user.token);
         per.setString('type', user.toMap()['role']);
         per.setInt('id', user.id);
+        return data;
       }
-      return jsonDecode(re.body);
+      return data;
     } catch (e) {
       print(e);
-      return {'status': false, 'message': 'verify your Connection!'};
+      return {'status': false, 'errors': 'verify your Connection!'};
     }
   }
 
@@ -94,11 +96,11 @@ class UserRepository {
         }
         return {'status': true};
       } else {
-        return {'status': false, 'message': data['error']};
+        return {'status': false, 'errors': data['errors']};
       }
     } catch (e) {
       print(e);
-      return {'status': false, 'message': 'Connecation Problem!'};
+      return {'status': false, 'errors': 'Connecation Problem!'};
     }
   }
 
@@ -109,7 +111,7 @@ class UserRepository {
       if (element.name.contains(name)) {
         print(element.name);
         _filetrd.add(element);
-      } 
+      }
     });
     return _filetrd;
   }
