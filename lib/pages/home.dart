@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:horizon_realtors/widget/bottom_bar.dart';
 
 class Home extends StatefulWidget {
@@ -17,10 +16,18 @@ class _HomeState extends State<Home> {
     {'name': 'Land', 'icon': 'assets/land.png'},
   ];
   var width;
-  static List _fiters = ['Last month', 'Last year'];
-  var inialvalue = _fiters[0];
+  List _fiters = ['Last month', 'Last year'];
+
   final _fontColor = Color(0xff363636);
   final _numColor = Color(0xff946BAB);
+  var inialvalue;
+  @override
+  void initState() {
+    inialvalue = _fiters[0];
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width - 115.0;
@@ -153,69 +160,71 @@ class _HomeState extends State<Home> {
             style: TextStyle(
                 color: _fontColor, fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Color(0xffECECEC))),
-            padding: EdgeInsets.all(5),
-            height: 200.0,
-            child: Echarts(
-              option: '''
-                   {
-                    xAxis: {
-                      type: 'category',
-                      boundaryGap: false,
-                      data: ['DEC 20 \u1d40\u1d34', 'DEC 27 \u1d40\u1d34', 'JAN 3 \u1d40\u1d34', 'JAN 11 \u1d40\u1d34', 'JAN 18 \u1d40\u1d34'],
-                      axisLabel:{
-                        color:"#6178B9",
-                      },
-                      axisTick:{
-                        show:false,
-                      },
-                      axisLine:{
-                        show: false
-                      }
-                    },
-                    yAxis: {
-                      type: 'value',
-                      show: false,
-                      boundaryGap:[0,0]
-                     
-                    },
-                    width: $width,
-                    height: 108,
-                    series: [{
-                      data: [820, 932, 901, 934, 1290, 1330, 1320],
-                      type: 'line',
-                      symbol: 'circle',
-                      symbolSize: 8,
-                      lineStyle: {
-                          color: '#3FB1E3',
-                          width: 1,
-                          type: 'solid'
-                      },
-                      itemStyle: {
-                          borderWidth: 1,
-                          borderColor: "#3FB1E3",
-                          color: "#3FB1E3"
-                      },
-                      label:{
-                        show: true
-                      },
-                      areaStyle: {
-                        color:"#EEF5F8"
-                      }
-                     
-                    }],
-                  }
-                   ''',
-            ),
-       
-       
-       
+          SizedBox(
+            height: 10,
           ),
+          Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Color(0xffECECEC))),
+              padding: EdgeInsets.all(5),
+              height: 200.0,
+              child: Container()
+
+              //  Echarts(
+              //   option: '''
+              //        {
+              //         xAxis: {
+              //           type: 'category',
+              //           boundaryGap: false,
+              //           data: ['DEC 20 \u1d40\u1d34', 'DEC 27 \u1d40\u1d34', 'JAN 3 \u1d40\u1d34', 'JAN 11 \u1d40\u1d34', 'JAN 18 \u1d40\u1d34'],
+              //           axisLabel:{
+              //             color:"#6178B9",
+              //           },
+              //           axisTick:{
+              //             show:false,
+              //           },
+              //           axisLine:{
+              //             show: false
+              //           }
+              //         },
+              //         yAxis: {
+              //           type: 'value',
+              //           show: false,
+              //           boundaryGap:[0,0]
+
+              //         },
+              //         width: $width,
+              //         height: 108,
+              //         series: [{
+              //           data: [820, 932, 901, 934, 1290, 1330, 1320],
+              //           type: 'line',
+              //           symbol: 'circle',
+              //           symbolSize: 8,
+              //           lineStyle: {
+              //               color: '#3FB1E3',
+              //               width: 1,
+              //               type: 'solid'
+              //           },
+              //           itemStyle: {
+              //               borderWidth: 1,
+              //               borderColor: "#3FB1E3",
+              //               color: "#3FB1E3"
+              //           },
+              //           label:{
+              //             show: true
+              //           },
+              //           areaStyle: {
+              //             color:"#EEF5F8"
+              //           }
+
+              //         }],
+              //       }
+              //        ''',
+              // ),
+
+              ),
         ],
       ),
     );

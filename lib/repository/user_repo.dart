@@ -14,14 +14,15 @@ class UserRepository {
   factory UserRepository() {
     return _userRepository;
   }
-
+Constant _constant = Constant();
   User user;
   List<Agency> agenies = [];
+
 
   login(Map log) async {
     try {
       var re = await http.post(
-          '$url/api/auth/login?email=${log['email']}&password=${log['password']}');
+          '${_constant.url}/api/auth/login?email=${log['email']}&password=${log['password']}');
       Map data = jsonDecode(re.body);
       // print(data);
 
@@ -48,7 +49,7 @@ class UserRepository {
     print(input['role']);
     try {
       var re = await http.post(
-          '$url/api/auth/register?name=${input['name']}&email=${input['email']}&password=${input['password']}&role=${input['role']}&agancy_name=${input['agencyname']}&phone=${input['phone']}');
+          '${_constant.url}/api/auth/register?name=${input['name']}&email=${input['email']}&password=${input['password']}&role=${input['role']}&agancy_name=${input['agencyname']}&phone=${input['phone']}');
 
       Map data = jsonDecode(re.body);
       print(data);
@@ -86,7 +87,7 @@ class UserRepository {
 
   Future<Map<String, dynamic>> getAgencies() async {
     try {
-      var re = await http.get('$url/api/auth/agancys_names');
+      var re = await http.get('${_constant.url}/api/auth/agancys_names');
       var data = jsonDecode(re.body);
       print(data);
       if (data['status']) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:horizon_realtors/pages/description.dart';
 import 'package:horizon_realtors/pages/splash.dart';
 
 

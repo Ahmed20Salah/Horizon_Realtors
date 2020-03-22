@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:horizon_realtors/models/post.dart';
+import 'package:horizon_realtors/models/user.dart';
+import 'package:horizon_realtors/repository/user_repo.dart';
+import 'package:horizon_realtors/utilts/constant.dart';
 import 'package:horizon_realtors/widget/agent_widget.dart';
 
 class Description extends StatefulWidget {
@@ -14,6 +17,8 @@ class _DescriptionState extends State<Description> {
   final List<String> _imgs = ['assets/1.jpg', 'assets/2.jpg', 'assets/3.jpg'];
   final _mainColor = Color(0xff3FB1E3);
   int current = 0;
+  UserRepository _userRepository = UserRepository();
+  Constant _constant = Constant();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +32,9 @@ class _DescriptionState extends State<Description> {
             _postData(),
             _description(),
             _mapScreenshot(),
-            _poster()
+            _userRepository.user.type == UserType.EndUser
+                ? _poster()
+                : Container()
           ],
         ),
       ),
@@ -44,7 +51,7 @@ class _DescriptionState extends State<Description> {
             autoPlay: true,
             viewportFraction: 1.0,
             height: 300.0,
-            items: _imgs.map((e) {
+            items: widget._post.imgs.map((e) {
               return Container(
                 height: 300.0,
                 width: MediaQuery.of(context).size.width,
@@ -52,7 +59,7 @@ class _DescriptionState extends State<Description> {
                   color: Colors.blue,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(e),
+                    image: NetworkImage('${_constant.url}/public/posts/$e'),
                   ),
                 ),
               );
@@ -102,7 +109,7 @@ class _DescriptionState extends State<Description> {
                       color: Color(0xff363636),
                     ),
                     child: Text(
-                      '${++current} / ${_imgs.length}',
+                      '${++current} / ${widget._post.imgs.length}',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -146,12 +153,18 @@ class _DescriptionState extends State<Description> {
                     SizedBox(
                       width: 20.0,
                     ),
-                    InkWell(
-                        child: Icon(
-                          Icons.favorite_border,
-                          color: Color(0xff363636),
-                        ),
-                        onTap: null),
+                    _userRepository.user.type == UserType.EndUser
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: InkWell(
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: Color(0xff363636),
+                                ),
+                                onTap: null),
+                          )
+                        : Container(),
                   ],
                 )
               ],
@@ -389,6 +402,4 @@ class _DescriptionState extends State<Description> {
       ),
     );
   }
-
-  Widget _bottomNavigationBar() {}
 }

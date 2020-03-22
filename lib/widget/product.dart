@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horizon_realtors/models/post.dart';
 import 'package:horizon_realtors/pages/description.dart';
+import 'package:horizon_realtors/utilts/constant.dart';
 
 import '../models/user.dart';
 import '../repository/user_repo.dart';
@@ -10,6 +11,8 @@ class ProductWidget extends StatelessWidget {
   ProductWidget(this.post);
 
   final _userRepository = UserRepository();
+  Constant _constant = Constant();
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -46,7 +49,7 @@ class ProductWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
         image: DecorationImage(
-            image: AssetImage('assets/photo.jpg'), fit: BoxFit.cover),
+            image: NetworkImage('${_constant.url}/public/posts/${post.imgs[0]}'), fit: BoxFit.cover),
       ),
       padding: EdgeInsets.all(10.0),
       child: Column(

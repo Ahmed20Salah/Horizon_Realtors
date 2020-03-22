@@ -24,7 +24,9 @@ class _UserHomeState extends State<UserHome> {
 
   @override
   void initState() {
-    _bloc.add(GetPosts());
+    if (_postsRepository.posts == null) {
+      _bloc.add(GetPosts());
+    }
     super.initState();
   }
 
@@ -75,7 +77,7 @@ class _UserHomeState extends State<UserHome> {
                     padding: EdgeInsets.all(0),
                     itemCount: _postsRepository.posts.length,
                     itemBuilder: (BuildContext context, index) {
-                      return ProductWidget( _postsRepository.posts[index]);
+                      return ProductWidget(_postsRepository.posts[index]);
                     },
                   );
                 } else if (state is Loading) {

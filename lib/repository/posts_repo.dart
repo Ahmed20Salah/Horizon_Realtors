@@ -10,12 +10,15 @@ class PostsRepository {
   factory PostsRepository() {
     return _instance;
   }
-  List<Post> posts = [];
+  List<Post> posts ;
+  Constant _constant = Constant();
+
   getPosts() async {
     try {
-      var re = await http.get('$url/api/posts/all_posts');
+      var re = await http.get('${_constant.url}/api/posts/all_posts');
       var data = jsonDecode(re.body);
       if (data['status']) {
+        posts = [];
         print(data['data']);
         data['data'].forEach((ele) {
           posts.add(Post.fromMap(ele));

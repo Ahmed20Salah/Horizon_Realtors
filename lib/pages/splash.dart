@@ -41,13 +41,6 @@ class _SplashState extends State<Splash> {
           children: <Widget>[
             Logo(false),
             _listen(),
-            InkWell(
-              onTap: (){
-                Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
-              },
-              child: Text('skip'),
-            )
           ],
         ),
       ),
