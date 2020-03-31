@@ -30,7 +30,12 @@ dependencies:
   # flutter_echarts: ^1.2.3
   shared_preferences: ^0.5.6+2
   carousel_slider: ^1.4.1
-
+  image_picker: ^0.6.3+4
+  flutter_pusher: ^1.0.1
+  pusher: ^1.0.0
+  google_maps_flutter: ^0.5.25+2
+  geocoder: ^0.2.1
+  dio:
 dev_dependencies:
   flutter_test:
     sdk: flutter

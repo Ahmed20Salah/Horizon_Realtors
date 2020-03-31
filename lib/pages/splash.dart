@@ -51,6 +51,7 @@ class _SplashState extends State<Splash> {
     return BlocListener<UserBloc, UserState>(
       bloc: _bloc,
       listener: (context, state) {
+        print(state);
         if (state is Authenticated) {
           Navigator.push(
             context,
@@ -61,7 +62,7 @@ class _SplashState extends State<Splash> {
                       : Home(),
             ),
           );
-        } else {
+        } else if (state is Unauthenticated) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
         }

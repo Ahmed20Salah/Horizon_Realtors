@@ -8,3 +8,11 @@ class GetProperties extends PropertiesEvent {
   @override
   List<Object> get props => [];
 }
+
+class AddProperties extends PropertiesEvent {
+  final Map map;
+  AddProperties(this.map);
+
+  @override
+  List<Object> get props => [];
+}

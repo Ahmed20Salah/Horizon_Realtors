@@ -4,5 +4,6 @@ class Constant{
   factory Constant(){
     return _obj;
   }
-  String url = 'http://webzone.ieeeshasb.org';
+ final String url = 'http://webzone.ieeeshasb.org';
+ final String apiKey = 'AIzaSyAT07iMlfZ9bJt1gmGj9KhJDLFY8srI6dA' ;
 }

@@ -42,6 +42,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       if (re) {
         yield Authenticated();
       } else {
+
         yield Unauthenticated();
       }
     } else if (event is Search) {

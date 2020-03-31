@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:horizon_realtors/blocs/properties_bloc/properties_bloc.dart';
 import 'package:horizon_realtors/models/post.dart';
-import 'package:horizon_realtors/repository/agency_repo.dart';
+import 'package:horizon_realtors/pages/add_property.dart';
+import 'package:horizon_realtors/pages/add_property.dart';
+import 'package:horizon_realtors/repository/properties_repo.dart';
 import 'package:horizon_realtors/widget/product.dart';
 
 import '../widget/bottom_bar.dart';
@@ -16,7 +18,7 @@ class _PropertiesState extends State<Properties> {
   int isSelected = 1;
   final _bloc = PropertiesBloc();
 
-  static final _agencyRepository = AgencyRepository();
+  static final _agencyRepository = PropertiesRepository();
 
   List<Post> _current;
   @override
@@ -77,7 +79,10 @@ class _PropertiesState extends State<Properties> {
       ),
       bottomNavigationBar: CustomBottomBar(1),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddPropertyScreen()));
+        },
         child: Icon(Icons.add),
         backgroundColor: Color(0xff3FB1E3),
       ),
@@ -235,7 +240,7 @@ class _PropertiesState extends State<Properties> {
               content: Container(
                 alignment: Alignment.center,
                 height: 20.0,
-                child: Text(state.error),
+                child: Text(state.errors),
               ),
             ),
           );

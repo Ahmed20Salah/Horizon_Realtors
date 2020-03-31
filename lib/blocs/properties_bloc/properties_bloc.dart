@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:horizon_realtors/repository/agency_repo.dart';
+import 'package:horizon_realtors/repository/properties_repo.dart';
 
 part 'properties_event.dart';
 part 'properties_state.dart';
@@ -15,16 +15,24 @@ class PropertiesBloc extends Bloc<PropertiesEvent, PropertiesState> {
   Stream<PropertiesState> mapEventToState(
     PropertiesEvent event,
   ) async* {
-    AgencyRepository _agencyRepo = AgencyRepository();
+    PropertiesRepository _properiesRepo = PropertiesRepository();
 
     if (event is GetProperties) {
       print(event);
       yield Loading();
-      var re = await _agencyRepo.getProperties();
+      var re = await _properiesRepo.getProperties();
       if (re['status']) {
         yield HaveProperties();
       } else {
         yield Error(re['errors']);
+      }
+    } else if (event is AddProperties) {
+      yield Loading();
+      var re = await _properiesRepo.addProperety(event.map);
+      if (re['status']) {
+        yield AddedProperty();
+      } else {
+        yield Error(re['message']);
       }
     }
   }

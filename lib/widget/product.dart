@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:horizon_realtors/blocs/properties_bloc/properties_bloc.dart';
 import 'package:horizon_realtors/models/post.dart';
 import 'package:horizon_realtors/pages/description.dart';
 import 'package:horizon_realtors/utilts/constant.dart';
@@ -49,7 +51,9 @@ class ProductWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
         image: DecorationImage(
-            image: NetworkImage('${_constant.url}/public/posts/${post.imgs[0]}'), fit: BoxFit.cover),
+            image:
+                NetworkImage('${_constant.url}/public/posts/${post.imgs[0]}'),
+            fit: BoxFit.cover),
       ),
       padding: EdgeInsets.all(10.0),
       child: Column(
@@ -59,8 +63,8 @@ class ProductWidget extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Container(
-              width: 32,
-              height: 32,
+              width: 40,
+              height: 40,
               child: _userRepository.user.type == UserType.EndUser
                   ? InkWell(
                       child: Icon(
@@ -68,13 +72,23 @@ class ProductWidget extends StatelessWidget {
                         color: Colors.white,
                       ),
                     )
-                  : Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle),
-                      child: Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
+                  : InkWell(
+                      onTap: () {
+                        print('taped');
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) => CustomBottomSheetBar(),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.1),
+                            shape: BoxShape.circle),
+                        child: Icon(
+                          Icons.more_vert,
+                          size: 29,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
             ),
@@ -217,6 +231,85 @@ class ProductWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CustomBottomSheetBar extends StatelessWidget {
+  CustomBottomSheetBar({
+    Key key,
+  }) : super(key: key);
+  final _bloc = PropertiesBloc();
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoActionSheet(
+      message: Text(
+        'Property management',
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Color(0xff363636)),
+      ),
+      actions: <Widget>[
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.edit,
+                size: 20.0,
+                color: Color(0xff3FB1E3),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
+              Text(
+                'Edit',
+                style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+              )
+            ],
+          ),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {},
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.done,
+                color: Color(0xff31CF37),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
+              Text(
+                'Mark as sold',
+                style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+              )
+            ],
+          ),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {},
+          child: Row(
+            children: <Widget>[
+              Icon(
+                CupertinoIcons.delete,
+                color: Color(0xffFF2129),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
+              Text(
+                'Delete',
+                style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

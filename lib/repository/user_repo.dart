@@ -14,10 +14,9 @@ class UserRepository {
   factory UserRepository() {
     return _userRepository;
   }
-Constant _constant = Constant();
+  Constant _constant = Constant();
   User user;
   List<Agency> agenies = [];
-
 
   login(Map log) async {
     try {
@@ -81,6 +80,15 @@ Constant _constant = Constant();
       'role': per.getString('type'),
       'id': per.getInt('id')
     });
+    try {
+      var re = await http.get('${_constant.url}/api/auth/me/${user.email}');
+      var _converted = jsonDecode(re.body);
+      if (_converted['status']) {
+        user = User.fromMap(_converted['data']);
+      }
+    } catch (e) {
+      print(e);
+    }
     print(user.type);
     return true;
   }

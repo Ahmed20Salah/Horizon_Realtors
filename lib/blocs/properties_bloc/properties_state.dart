@@ -15,13 +15,17 @@ class HaveProperties extends PropertiesState {
 }
 
 class Error extends PropertiesState {
- final  String  error;
- Error(this.error);
+ final  String  errors;
+ Error(this.errors);
    @override
   List<Object> get props => [];
 }
 
 class Loading extends PropertiesState {
+  @override
+  List<Object> get props => [];
+}
+class AddedProperty extends PropertiesState {
   @override
   List<Object> get props => [];
 }
