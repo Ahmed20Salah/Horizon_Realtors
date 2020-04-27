@@ -10,7 +10,6 @@ class User {
   String image;
 
   User.fromMap(Map<String, dynamic> map) {
-   print('calling user model');
     this.id = map['id'];
     this.name = map['name'];
     this.email = map['email'];

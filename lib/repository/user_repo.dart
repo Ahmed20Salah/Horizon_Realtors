@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:horizon_realtors/blocs/chat_bloc/chat_bloc.dart';
 import 'package:horizon_realtors/models/agency.dart';
+import 'package:horizon_realtors/repository/chat_repository.dart';
 import 'package:horizon_realtors/utilts/constant.dart';
 
 import 'package:http/http.dart' as http;
@@ -14,7 +16,7 @@ class UserRepository {
   factory UserRepository() {
     return _userRepository;
   }
-  Constant _constant = Constant();
+  final Constant _constant = Constant();
   User user;
   List<Agency> agenies = [];
 
@@ -33,7 +35,6 @@ class UserRepository {
         per.setString('token', user.token);
         per.setString('type', user.toMap()['role']);
         per.setInt('id', user.id);
-
         // print(user.name);
         return data;
       }
@@ -85,9 +86,11 @@ class UserRepository {
       var _converted = jsonDecode(re.body);
       if (_converted['status']) {
         user = User.fromMap(_converted['data']);
+        
       }
     } catch (e) {
-      print(e);
+      print(user.type);
+    return true;
     }
     print(user.type);
     return true;

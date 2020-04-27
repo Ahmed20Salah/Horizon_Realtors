@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:horizon_realtors/blocs/chat_bloc/chat_bloc.dart';
 import 'package:horizon_realtors/blocs/user_bloc/user_bloc.dart';
 import 'package:horizon_realtors/models/user.dart';
 import 'package:horizon_realtors/pages/home.dart';
@@ -16,6 +17,7 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   final _userRepository = UserRepository();
   final _bloc = UserBloc();
+  final _chatBloc = ChatBloc();
   @override
   void initState() {
     _bloc.add(Checking());
@@ -53,6 +55,8 @@ class _SplashState extends State<Splash> {
       listener: (context, state) {
         print(state);
         if (state is Authenticated) {
+_chatBloc.add(GetAllChats(BlocProvider.of<ChatBloc>(context)));
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -63,7 +67,7 @@ class _SplashState extends State<Splash> {
             ),
           );
         } else if (state is Unauthenticated) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
         }
       },

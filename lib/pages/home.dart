@@ -1,4 +1,10 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pusher/pusher.dart';
+import 'package:horizon_realtors/blocs/agency_bloc/agency_bloc.dart';
+
+import 'package:horizon_realtors/repository/properties_repo.dart';
 import 'package:horizon_realtors/widget/bottom_bar.dart';
 
 class Home extends StatefulWidget {
@@ -21,9 +27,15 @@ class _HomeState extends State<Home> {
   final _fontColor = Color(0xff363636);
   final _numColor = Color(0xff946BAB);
   var inialvalue;
+  var _repoProperites = PropertiesRepository();
+  AgencyBloc _bloc = AgencyBloc();
+  PropertiesRepository _propertiesRepository = PropertiesRepository();
   @override
   void initState() {
     inialvalue = _fiters[0];
+    if (_repoProperites.chatDataCurrent == null) {
+      _bloc.add(GetHomeData());
+    }
 
     super.initState();
   }
@@ -33,29 +45,45 @@ class _HomeState extends State<Home> {
     width = MediaQuery.of(context).size.width - 115.0;
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 24.0,
-              color: Color(0xff3FB1E3),
-            ),
-            _search(context),
-            Container(
-              margin: EdgeInsets.all(16.0),
-              height: 160.0,
-              child: Column(
+        child: BlocBuilder(
+          bloc: _bloc,
+          builder: (context, state) {
+            print(state);
+            if (state is AgencyLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is AgencyError) {
+              return Container(
+                child: Text(state.error),
+              );
+            } else {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  _profit(),
-                  SizedBox(
-                    height: 6,
+                  Container(
+                    height: 24.0,
+                    color: Color(0xff3FB1E3),
                   ),
-                  _details()
+                  _search(context),
+                  Container(
+                    margin: EdgeInsets.all(16.0),
+                    height: 160.0,
+                    child: Column(
+                      children: <Widget>[
+                        _profit(),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        _details()
+                      ],
+                    ),
+                  ),
+                  _chart(),
                 ],
-              ),
-            ),
-            _chart(),
-          ],
+              );
+            }
+          },
         ),
       ),
       bottomNavigationBar: CustomBottomBar(0),
@@ -69,14 +97,15 @@ class _HomeState extends State<Home> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            _dataItem('Earned', '\$2.265,00'),
-            _dataItem('Properties sold', 4),
-            _dataItem('Properties rent', 2)
+            _dataItem('Earned', '\$${_propertiesRepository.earned}'),
+            _dataItem('Properties sold', _propertiesRepository.soldCount),
+            _dataItem('Properties rent', _propertiesRepository.rentCount)
           ],
         ),
         Container(
           margin: EdgeInsets.only(top: 8),
-          child: _dataItem('Avail. properties', 1),
+          child:
+              _dataItem('Avail. properties', _propertiesRepository.availCount),
         )
       ],
     );
@@ -164,67 +193,126 @@ class _HomeState extends State<Home> {
             height: 10,
           ),
           Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Color(0xffECECEC))),
-              padding: EdgeInsets.all(5),
-              height: 200.0,
-              child: Container()
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Color(0xffECECEC))),
+            height: 200.0,
+            width: MediaQuery.of(context).size.width - 40.0,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: false,
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 22,
+                    textStyle:
+                        const TextStyle(color: Color(0xff6178B9), fontSize: 12),
+                    getTitles: (value) {
+                      // switch (value.toInt()) {
+                      //   case 1:
+                      //     return 'mr';
+                      //     break;
 
-              //  Echarts(
-              //   option: '''
-              //        {
-              //         xAxis: {
-              //           type: 'category',
-              //           boundaryGap: false,
-              //           data: ['DEC 20 \u1d40\u1d34', 'DEC 27 \u1d40\u1d34', 'JAN 3 \u1d40\u1d34', 'JAN 11 \u1d40\u1d34', 'JAN 18 \u1d40\u1d34'],
-              //           axisLabel:{
-              //             color:"#6178B9",
-              //           },
-              //           axisTick:{
-              //             show:false,
-              //           },
-              //           axisLine:{
-              //             show: false
-              //           }
-              //         },
-              //         yAxis: {
-              //           type: 'value',
-              //           show: false,
-              //           boundaryGap:[0,0]
-
-              //         },
-              //         width: $width,
-              //         height: 108,
-              //         series: [{
-              //           data: [820, 932, 901, 934, 1290, 1330, 1320],
-              //           type: 'line',
-              //           symbol: 'circle',
-              //           symbolSize: 8,
-              //           lineStyle: {
-              //               color: '#3FB1E3',
-              //               width: 1,
-              //               type: 'solid'
-              //           },
-              //           itemStyle: {
-              //               borderWidth: 1,
-              //               borderColor: "#3FB1E3",
-              //               color: "#3FB1E3"
-              //           },
-              //           label:{
-              //             show: true
-              //           },
-              //           areaStyle: {
-              //             color:"#EEF5F8"
-              //           }
-
-              //         }],
-              //       }
-              //        ''',
-              // ),
-
+                      //   case 2:
+                      //     return 'mr';
+                      //     break;
+                      //   case 3:
+                      //     return 'mr';
+                      //     break;
+                      // }
+                      if (value < _repoProperites.chatDataCurrent.length) {
+                        return _repoProperites
+                            .chatDataCurrent[value.toInt()].time;
+                      }
+                    },
+                    margin: 8,
+                  ),
+                  leftTitles: SideTitles(
+                    showTitles: false,
+                  ),
+                ),
+                borderData: FlBorderData(
+                    show: true,
+                    border:
+                        Border.all(color: const Color(0xffECECEC), width: 1)),
+                minX: 0,
+                maxX: _repoProperites.chatDataCurrent.length.toDouble(),
+                minY: 0,
+                maxY: _repoProperites.max.toDouble(),
+                lineBarsData: [
+                  LineChartBarData(
+                    colors: [Color(0xff3FB1E3)],
+                    dotData: FlDotData(show: true, dotColor: Color(0xff3FB1E3)),
+                    colorStops: [2],
+                    belowBarData: BarAreaData(
+                      show: true,
+                      colors: [Color(0xffEEF5F8)],
+                    ),
+                    spots: _propertiesRepository.chatDataCurrent
+                        .map((e) =>
+                            FlSpot(e.number.toDouble(), e.cost.toDouble()))
+                        .toList(),
+                  )
+                ],
               ),
+            ),
+
+            //  Echarts(
+            //   option: '''
+            //        {
+            //         xAxis: {
+            //           type: 'category',
+            //           boundaryGap: false,
+            //           data: ['DEC 20 \u1d40\u1d34', 'DEC 27 \u1d40\u1d34', 'JAN 3 \u1d40\u1d34', 'JAN 11 \u1d40\u1d34', 'JAN 18 \u1d40\u1d34'],
+            //           axisLabel:{
+            //             color:"#6178B9",
+            //           },
+            //           axisTick:{
+            //             show:false,
+            //           },
+            //           axisLine:{
+            //             show: false
+            //           }
+            //         },
+            //         yAxis: {
+            //           type: 'value',
+            //           show: false,
+            //           boundaryGap:[0,0]
+
+            //         },
+            //         width: $width,
+            //         height: 108,
+            //         series: [{
+            //           data: [820, 932, 901, 934, 1290, 1330, 1320],
+            //           type: 'line',
+            //           symbol: 'circle',
+            //           symbolSize: 8,
+            //           lineStyle: {
+            //               color: '#3FB1E3',
+            //               width: 1,
+            //               type: 'solid'
+            //           },
+            //           itemStyle: {
+            //               borderWidth: 1,
+            //               borderColor: "#3FB1E3",
+            //               color: "#3FB1E3"
+            //           },
+            //           label:{
+            //             show: true
+            //           },
+            //           areaStyle: {
+            //             color:"#EEF5F8"
+            //           }
+
+            //         }],
+            //       }
+            //        ''',
+            // ),
+          ),
         ],
       ),
     );

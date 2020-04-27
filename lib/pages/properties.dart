@@ -58,6 +58,7 @@ class _PropertiesState extends State<Properties> {
               child: BlocBuilder(
                 bloc: _bloc,
                 builder: (context, state) {
+                  print(state);
                   if (state is Loading) {
                     return Center(
                       child: CircularProgressIndicator(),

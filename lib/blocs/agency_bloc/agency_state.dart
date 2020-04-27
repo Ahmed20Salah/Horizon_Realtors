@@ -9,14 +9,14 @@ class AgencyInitial extends AgencyState {
   List<Object> get props => [];
 }
 
-class Loading extends AgencyState {
+class AgencyLoading extends AgencyState {
   @override
   List<Object> get props => [];
 }
 
-class Error extends AgencyState {
+class AgencyError extends AgencyState {
   final String error;
-  Error(this.error);
+  AgencyError(this.error);
   @override
   List<Object> get props => [];
 }

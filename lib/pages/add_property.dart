@@ -1,20 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_pusher/pusher.dart';
 import 'package:horizon_realtors/blocs/properties_bloc/properties_bloc.dart';
+import 'package:horizon_realtors/models/mode.dart';
 import 'package:horizon_realtors/pages/google_maps.dart';
 import 'package:horizon_realtors/pages/properties.dart';
 import 'package:horizon_realtors/utilts/constant.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pusher/pusher.dart' as lis;
 
 enum _CategoryType { Apartment, Commercial, House, Land }
 enum _DropdownType { Bathrooms, Bedrooms }
 
 class AddPropertyScreen extends StatefulWidget {
+  final Mode mode;
   final Map data;
-  AddPropertyScreen({this.data});
+  AddPropertyScreen({this.data, this.mode});
   @override
   _AddPropertyState createState() => _AddPropertyState();
 }
@@ -90,13 +92,14 @@ class _AddPropertyState extends State<AddPropertyScreen> {
     if (widget.data != null) {
       print('pass');
       _description.text = widget.data['description'];
-      _price.text = widget.data['price'];
+      _price.text = widget.data['price'].toString();
       type = widget.data['type'];
-      available = widget.data['available'];
-      _bathroomsValue = widget.data['bathrooms'];
-      _bedroomsValue = widget.data['bedrooms'];
-      _area.text = widget.data['area'];
+      available = widget.data['finance_availab'];
+      _bathroomsValue = widget.data['bath_rooms'];
+      _bedroomsValue = widget.data['bed_rooms'];
+      _area.text = widget.data['area'].toString();
       _categoryType = widget.data['category'];
+      _newData['newImgs'] = [];
     }
 
     super.initState();
@@ -120,7 +123,7 @@ class _AddPropertyState extends State<AddPropertyScreen> {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 15.0),
                   child: Text(
-                    'Add Property',
+                    widget.mode == Mode.Edit ? 'Edit Property' : 'Add Property',
                     style: TextStyle(
                         color: _titleColor,
                         fontSize: 20.0,
@@ -210,7 +213,7 @@ class _AddPropertyState extends State<AddPropertyScreen> {
                 color: Color(0xff3FB1E3),
               ),
               child: Text(
-                'Add property',
+                widget.mode == Mode.Edit ? 'Edit Property' : 'Add property',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -225,21 +228,24 @@ class _AddPropertyState extends State<AddPropertyScreen> {
                   type != null &&
                   _categoryType != null &&
                   _newData['lant'] != null) {
-                _bloc.add(AddProperties({
-                  'imgs': _newData['imgs'],
-                  'description': _description.text,
-                  'price': _price.text,
-                  'type': type,
-                  'available': available,
-                  'lant': _newData['lant'],
-                  'lang': _newData['lang'],
-                  'address': _newData['address'],
-                  'main_address': _newData['main_address'],
-                  'category': _categoryType,
-                  'bathroom': _bathroomsValue,
-                  'badrooms': _bedroomsValue,
-                  'area': _area.text
-                }));
+                if (widget.mode == Mode.Edit) {
+                } else {
+                  _bloc.add(AddProperties({
+                    'imgs': _newData['imgs'],
+                    'description': _description.text,
+                    'price': _price.text,
+                    'type': type,
+                    'available': available ? 1 : 0,
+                    'lant': _newData['lant'],
+                    'lang': _newData['lang'],
+                    'address': _newData['address'],
+                    'main_address': _newData['main_address'],
+                    'category': _categoryType,
+                    'bathrooms': _bathroomsValue,
+                    'bedrooms': _bedroomsValue,
+                    'area': _area.text
+                  }));
+                }
               }
             },
           )
@@ -563,9 +569,9 @@ class _AddPropertyState extends State<AddPropertyScreen> {
                       'description': _description.text,
                       'price': _price.text,
                       'type': type,
-                      'available': available,
-                      'bathrooms': _bathroomsValue,
-                      'bedrooms': _bedroomsValue,
+                      'finance_availab': available,
+                      'bath_rooms': _bathroomsValue,
+                      'bed_rooms': _bedroomsValue,
                       'area': _area.text,
                       'category': _categoryType
                     }),
@@ -938,9 +944,13 @@ class _AddPropertyState extends State<AddPropertyScreen> {
             height: 120.0,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: _newData['imgs'].length + 1,
+              itemCount:
+                  _newData['imgs'].length + 1 + _newData['newImgs'].length,
               itemBuilder: (context, index) {
-                if (index == _newData['imgs'].length) {
+                print(index);
+
+                if (index ==
+                    _newData['imgs'].length + _newData['newImgs'].length) {
                   return InkWell(
                     onTap: () async {
                       _choosePickType(context);
@@ -958,18 +968,46 @@ class _AddPropertyState extends State<AddPropertyScreen> {
                     ),
                   );
                 }
-                return Container(
-                  width: 112.0,
-                  height: 112.0,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: FileImage(_newData['imgs'][index]),
-                        fit: BoxFit.cover),
-                  ),
-                );
+                if (index > _newData['imgs'].length) {
+                  return Container(
+                    width: 112.0,
+                    height: 112.0,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: FileImage(_newData['newImgs']
+                              [_newData['imgs'].length - index]),
+                          fit: BoxFit.cover),
+                    ),
+                  );
+                }
+                if (index < _newData['imgs'].length) {
+                  return Container(
+                    width: 112.0,
+                    height: 112.0,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: widget.mode == Mode.Edit
+                              ? NetworkImage(
+                                  '${_constant.url}/public/posts/${_newData['imgs'][index]}')
+                              : FileImage(_newData['imgs'][index]),
+                          fit: BoxFit.cover),
+                    ),
+                  );
+                }
               },
             ),
           ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 10.0),
+          //   height: 120.0,
+          //   child: ListView.builder(
+          //       padding: EdgeInsets.all(0.0),
+          //       scrollDirection: Axis.horizontal,
+          //       itemCount: _newData['newImgs'].length,
+          //       itemBuilder: (context, index) {
+          //         retur;
+          //       }),
+          // )
         ],
       ),
     );
@@ -1018,8 +1056,11 @@ class _AddPropertyState extends State<AddPropertyScreen> {
     print(_image);
     if (_image != null) {
       setState(() {
-        img = _image;
-        _newData['imgs'].add(_image);
+        if (widget.mode == Mode.Edit) {
+          _newData['newImgs'].add(_image);
+        } else {
+          _newData['imgs'].add(_image);
+        }
       });
     }
     return true;

@@ -14,7 +14,7 @@ class PostsRepository {
   Constant _constant = Constant();
 
   getPosts() async {
-    try {
+    // try {
       var re = await http.get('${_constant.url}/api/posts/all_posts');
       var data = jsonDecode(re.body);
       if (data['status']) {
@@ -27,10 +27,10 @@ class PostsRepository {
           'status': true,
         };
       }
-    } catch (e) {
-      print(e);
-      return {'status': false, 'message': 'Verify your connection!'};
-    }
+    // } catch (e) {
+    //   print(e);
+    //   return {'status': false, 'message': 'Verify your connection!'};
+    // }
   }
   // getFavorite()async{
   //   try {

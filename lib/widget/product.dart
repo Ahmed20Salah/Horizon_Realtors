@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:horizon_realtors/blocs/properties_bloc/properties_bloc.dart';
+import 'package:horizon_realtors/models/mode.dart';
 import 'package:horizon_realtors/models/post.dart';
+import 'package:horizon_realtors/pages/add_property.dart';
 import 'package:horizon_realtors/pages/description.dart';
 import 'package:horizon_realtors/utilts/constant.dart';
 
@@ -13,7 +15,7 @@ class ProductWidget extends StatelessWidget {
   ProductWidget(this.post);
 
   final _userRepository = UserRepository();
-  Constant _constant = Constant();
+  final Constant _constant = Constant();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +79,8 @@ class ProductWidget extends StatelessWidget {
                         print('taped');
                         showCupertinoModalPopup(
                           context: context,
-                          builder: (context) => CustomBottomSheetBar(),
+                          builder: (context) =>
+                              CustomBottomSheetBar(post: post),
                         );
                       },
                       child: Container(
@@ -106,7 +109,7 @@ class ProductWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    post.type == PropertyType.ForRent ? 'Rent' : 'Sale',
+                    post.type == 1 ? 'Rent' : 'Sale',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -236,9 +239,8 @@ class ProductWidget extends StatelessWidget {
 }
 
 class CustomBottomSheetBar extends StatelessWidget {
-  CustomBottomSheetBar({
-    Key key,
-  }) : super(key: key);
+  final Post post;
+  CustomBottomSheetBar({Key key, this.post}) : super(key: key);
   final _bloc = PropertiesBloc();
 
   @override
@@ -266,9 +268,19 @@ class CustomBottomSheetBar extends StatelessWidget {
               SizedBox(
                 width: 10.0,
               ),
-              Text(
-                'Edit',
-                style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+              MaterialButton(
+                padding: EdgeInsets.all(0.0),
+                height: 10.0,
+                onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddPropertyScreen(mode: Mode.Edit, data: post.toMap(),)));
+                },
+                child: Text(
+                  'Edit',
+                  style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+                ),
               )
             ],
           ),
@@ -302,9 +314,12 @@ class CustomBottomSheetBar extends StatelessWidget {
               SizedBox(
                 width: 10.0,
               ),
-              Text(
-                'Delete',
-                style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+              MaterialButton(
+                onPressed: () {},
+                child: Text(
+                  'Delete',
+                  style: TextStyle(color: Color(0xff363636), fontSize: 20.0),
+                ),
               )
             ],
           ),
